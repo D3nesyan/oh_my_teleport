@@ -10,6 +10,12 @@ base {
 	archivesName = project.archives_base_name
 }
 
+// Name the artifacts so the loader and the Minecraft version are visible at a glance:
+//   oh_my_teleport-fabric-mc26.3-v1.0.0.jar
+// The jar is named explicitly because Gradle would otherwise append "-<version>", giving
+// a redundant "-v1.0.0-1.0.0". The version declared inside fabric.mod.json stays plain 1.0.0.
+def artifactBaseName = "${project.archives_base_name}-fabric-mc${project.minecraft_version}-v${project.mod_version}"
+
 repositories {
 	// Add repositories to retrieve artifacts from in here.
 	// Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
@@ -75,10 +81,15 @@ test {
 jar {
 	def projectName = project.name
 	inputs.property "projectName", projectName
+	archiveFileName = "${artifactBaseName}.jar"
 
 	from("LICENSE") {
 		rename { "${it}_$projectName"}
 	}
+}
+
+tasks.matching { it.name == 'sourcesJar' }.configureEach {
+	archiveFileName = "${artifactBaseName}-sources.jar"
 }
 
 // configure the maven publication
