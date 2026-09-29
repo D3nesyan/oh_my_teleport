@@ -1,0 +1,26 @@
+{
+	"schemaVersion": 1,
+	"id": "oh_my_teleport",
+	"version": "${version}",
+	"name": "Oh My Teleport",
+	"description": "Teleport commands for singleplayer and Fabric servers: /back after death, request-based /tpa with /tpaccept, /home and /sethome, and personal /warp points.",
+	"authors": [
+		"Ratoriku"
+	],
+	"license": "MIT",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"com.ratoriku.ohmyteleport.OhMyTeleport"
+		],
+		"fabric-gametest": [
+			"com.ratoriku.ohmyteleport.gametest.TeleportGameTest"
+		]
+	},
+	"depends": {
+		"fabricloader": ">=0.19.5",
+		"minecraft": "~26.3",
+		"java": ">=25",
+		"fabric-api": "*"
+	}
+}

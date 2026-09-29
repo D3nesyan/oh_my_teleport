@@ -1,0 +1,37 @@
+{
+	"oh_my_teleport.msg.invalid_name": "这个名字不能用。最多 32 个字符，且不能包含空格。",
+
+	"oh_my_teleport.msg.home_set": "已设置家 '%s'。",
+	"oh_my_teleport.msg.home_replaced": "家 '%s' 已移动到这里。",
+	"oh_my_teleport.msg.home_removed": "已删除家 '%s'。",
+	"oh_my_teleport.msg.no_home": "你没有名为 '%s' 的家。",
+	"oh_my_teleport.msg.no_homes": "你还没有设置任何家。使用 /sethome。",
+	"oh_my_teleport.msg.homes_list": "你的家：%s",
+	"oh_my_teleport.msg.teleported_home": "欢迎回家，'%s'。",
+
+	"oh_my_teleport.msg.warp_set": "已设置传送点 '%s'。",
+	"oh_my_teleport.msg.warp_replaced": "传送点 '%s' 已移动到这里。",
+	"oh_my_teleport.msg.warp_removed": "已删除传送点 '%s'。",
+	"oh_my_teleport.msg.no_warp": "你没有名为 '%s' 的传送点。",
+	"oh_my_teleport.msg.no_warps": "你还没有设置任何传送点。使用 /warp set <名字>。",
+	"oh_my_teleport.msg.warps_list": "你的传送点：%s",
+	"oh_my_teleport.msg.teleported_warp": "已传送到 '%s'。",
+
+	"oh_my_teleport.msg.tpa_sent": "已向 %s 发送传送请求，%s 秒后过期。",
+	"oh_my_teleport.msg.tpa_received": "%s 想传送到你这里。使用 /tpaccept 或 /tpadeny。",
+	"oh_my_teleport.msg.tpa_overwritten": "%s 改为请求别人了，之前那份请求已失效。",
+	"oh_my_teleport.msg.tpa_self": "不能传送到你自己。",
+	"oh_my_teleport.msg.tpa_none": "你没有待处理的传送请求。",
+	"oh_my_teleport.msg.tpa_multiple": "你有多个待处理请求，来自 %s。使用 /tpaccept <玩家> 或 /tpadeny <玩家>。",
+	"oh_my_teleport.msg.tpa_no_such": "你没有来自该玩家的待处理请求。",
+	"oh_my_teleport.msg.tpa_accepted_target": "你接受了 %s 的请求。",
+	"oh_my_teleport.msg.tpa_accepted_requester": "%s 接受了你的请求，正在把你传送过去。",
+	"oh_my_teleport.msg.tpa_denied_target": "你拒绝了 %s 的请求。",
+	"oh_my_teleport.msg.tpa_denied_requester": "%s 拒绝了你的请求。",
+	"oh_my_teleport.msg.tpa_requester_offline": "该玩家已不在线。",
+
+	"oh_my_teleport.msg.back_none": "没有可以返回的位置。",
+	"oh_my_teleport.msg.back_death": "已返回死亡地点。",
+	"oh_my_teleport.msg.back_origin": "已返回上次传送前的位置。",
+	"oh_my_teleport.msg.unknown_dimension": "目标维度未加载。"
+}

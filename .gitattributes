@@ -1,0 +1,9 @@
+# Normalize line endings on commit. Without this, developing on Windows turns the
+# gradlew shell script into CRLF and it stops running on Linux and CI.
+* text=auto eol=lf
+
+gradlew.bat text eol=crlf
+
+*.jar binary
+*.png binary
+*.dat binary

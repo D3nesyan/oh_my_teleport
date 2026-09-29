@@ -1,0 +1,37 @@
+{
+	"oh_my_teleport.msg.invalid_name": "That name cannot be used. Use up to 32 characters without spaces.",
+
+	"oh_my_teleport.msg.home_set": "Home '%s' set.",
+	"oh_my_teleport.msg.home_replaced": "Home '%s' moved to here.",
+	"oh_my_teleport.msg.home_removed": "Home '%s' deleted.",
+	"oh_my_teleport.msg.no_home": "You have no home called '%s'.",
+	"oh_my_teleport.msg.no_homes": "You have not set any homes yet. Use /sethome.",
+	"oh_my_teleport.msg.homes_list": "Your homes: %s",
+	"oh_my_teleport.msg.teleported_home": "Welcome home, '%s'.",
+
+	"oh_my_teleport.msg.warp_set": "Warp '%s' set.",
+	"oh_my_teleport.msg.warp_replaced": "Warp '%s' moved to here.",
+	"oh_my_teleport.msg.warp_removed": "Warp '%s' deleted.",
+	"oh_my_teleport.msg.no_warp": "You have no warp called '%s'.",
+	"oh_my_teleport.msg.no_warps": "You have not set any warps yet. Use /warp set <name>.",
+	"oh_my_teleport.msg.warps_list": "Your warps: %s",
+	"oh_my_teleport.msg.teleported_warp": "Warped to '%s'.",
+
+	"oh_my_teleport.msg.tpa_sent": "Teleport request sent to %s. It expires in %s seconds.",
+	"oh_my_teleport.msg.tpa_received": "%s wants to teleport to you. Use /tpaccept or /tpadeny.",
+	"oh_my_teleport.msg.tpa_overwritten": "%s is asking somebody else instead; that request no longer stands.",
+	"oh_my_teleport.msg.tpa_self": "You cannot teleport to yourself.",
+	"oh_my_teleport.msg.tpa_none": "You have no pending teleport requests.",
+	"oh_my_teleport.msg.tpa_multiple": "You have several pending requests from %s. Use /tpaccept <player> or /tpadeny <player>.",
+	"oh_my_teleport.msg.tpa_no_such": "You have no pending request from that player.",
+	"oh_my_teleport.msg.tpa_accepted_target": "You accepted %s's request.",
+	"oh_my_teleport.msg.tpa_accepted_requester": "%s accepted your request. Teleporting you over.",
+	"oh_my_teleport.msg.tpa_denied_target": "You denied %s's request.",
+	"oh_my_teleport.msg.tpa_denied_requester": "%s denied your request.",
+	"oh_my_teleport.msg.tpa_requester_offline": "That player is no longer online.",
+
+	"oh_my_teleport.msg.back_none": "There is nowhere to go back to.",
+	"oh_my_teleport.msg.back_death": "Returned to where you died.",
+	"oh_my_teleport.msg.back_origin": "Returned to where you were before your last teleport.",
+	"oh_my_teleport.msg.unknown_dimension": "The target dimension is not loaded."
+}
