@@ -2,9 +2,12 @@ package com.ratoriku.ohmyteleport.server;
 
 import java.util.Optional;
 
+import com.ratoriku.ohmyteleport.core.DimensionNames;
 import com.ratoriku.ohmyteleport.core.TeleportPoint;
+import com.ratoriku.ohmyteleport.text.Messages;
 
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
@@ -49,6 +52,18 @@ public final class TeleportPoints {
 		});
 	}
 
+	/**
+	 * A readable name for a dimension.
+	 *
+	 * <p>Vanilla ships no translation key for dimension names, so this mod supplies its own for the
+	 * three built-in dimensions and falls back to a prettified id for anything else (modded
+	 * dimensions, and clients that do not have this mod installed and therefore have no lang file).
+	 */
+	public static Component dimensionName(ServerLevel level) {
+		Identifier id = level.dimension().identifier();
+		return Messages.text("dimension." + id.toLanguageKey(), DimensionNames.fallback(id.toString()));
+	}
+
 	/** @return the level, or {@code null} when that dimension is not loaded or the id is invalid */
 	public static ServerLevel levelOf(MinecraftServer server, TeleportPoint point) {
 		Identifier identifier = Identifier.tryParse(point.dimensionId());
@@ -70,4 +85,5 @@ public final class TeleportPoints {
 				TeleportTransition.DO_NOTHING);
 		player.teleport(transition);
 	}
+
 }

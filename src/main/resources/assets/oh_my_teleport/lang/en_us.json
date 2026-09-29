@@ -33,5 +33,12 @@
 	"oh_my_teleport.msg.back_none": "There is nowhere to go back to.",
 	"oh_my_teleport.msg.back_death": "Returned to where you died.",
 	"oh_my_teleport.msg.back_origin": "Returned to where you were before your last teleport.",
-	"oh_my_teleport.msg.unknown_dimension": "The target dimension is not loaded."
+	"oh_my_teleport.msg.unknown_dimension": "The target dimension is not loaded.",
+
+	"oh_my_teleport.msg.teleported": "Arrived at %s, %s, %s",
+	"oh_my_teleport.msg.teleported_in_dimension": "Arrived in %s at %s, %s, %s",
+
+	"oh_my_teleport.msg.dimension.minecraft.overworld": "Overworld",
+	"oh_my_teleport.msg.dimension.minecraft.the_nether": "The Nether",
+	"oh_my_teleport.msg.dimension.minecraft.the_end": "The End"
 }

@@ -33,5 +33,12 @@
 	"oh_my_teleport.msg.back_none": "没有可以返回的位置。",
 	"oh_my_teleport.msg.back_death": "已返回死亡地点。",
 	"oh_my_teleport.msg.back_origin": "已返回上次传送前的位置。",
-	"oh_my_teleport.msg.unknown_dimension": "目标维度未加载。"
+	"oh_my_teleport.msg.unknown_dimension": "目标维度未加载。",
+
+	"oh_my_teleport.msg.teleported": "已传送至坐标 %s, %s, %s",
+	"oh_my_teleport.msg.teleported_in_dimension": "已传送至维度 %s 的坐标 %s, %s, %s",
+
+	"oh_my_teleport.msg.dimension.minecraft.overworld": "主世界",
+	"oh_my_teleport.msg.dimension.minecraft.the_nether": "下界",
+	"oh_my_teleport.msg.dimension.minecraft.the_end": "末地"
 }

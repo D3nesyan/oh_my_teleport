@@ -78,6 +78,8 @@ Loom 新插件不再 remap：用 `implementation`（不是 `modImplementation`�
 - `BackResolver` — 纯函数：给定 `deathPoint: TeleportPoint?` 与 `lastOrigin: TeleportPoint?`，
   返回该去哪或「无可返回位置」。
 - `NameRules` — warp / home 名字合法性规则，被 `PointStore` 与命令参数解析共用。
+- `DimensionNames` — 维度的可读名回退值（`minecraft:the_nether` → `The Nether`；非 `minecraft` 命名空间保留完整 id，
+  免得两个不同维度看起来一样）。纯字符串处理，因此可单测。
 
 ### Minecraft 层（薄适配）
 
@@ -92,7 +94,8 @@ Loom 新插件不再 remap：用 `implementation`（不是 `modImplementation`�
 - `PlayerDataSavedData` — 挂在主世界的 `SavedData`，持有 `PlayerDataStore`，提供 codec。
 - `CommandRegistry` — 组装 Brigadier 树，把命令委托给纯逻辑层。
 - 各自 `HomeCommand` / `WarpCommand` / `TpaCommand` / `BackCommand`。
-- `Messages` — 统一的文案出口，用 `Component.translatableWithFallback`。
+- `Messages` — 统一的文案出口，用 `Component.translatableWithFallback`。放在独立的 `text` 包而不是 `command` 包：
+  `server` 也需要它，而 `server` 不能依赖 `command`（否则成环）。
 
 **不通用的规则：命令类只做参数解析与文案，不含传送逻辑；传送逻辑只存在于 `TeleportAdapter`；纯逻辑层不 import 任何 `net.minecraft.*`。**
 
@@ -118,6 +121,37 @@ Loom 新插件不再 remap：用 `implementation`（不是 `modImplementation`�
 死亡点用原版的，不自己存、不写 mixin，因此**死后掉线重登再 `/back` 依然有效**。
 
 `lastTeleportOrigin` 只在本 mod 自己的传送前更新。原版 `/tp` 或其它 mod 的传送不会更新它 —— 已知限制，写进 README。
+
+## 7.1 传送提示
+
+`TeleportService.teleport` 在移动成功后统一发一条坐标提示，坐标用 `%.2f`（与原版 `/tp` 一致，报出来的数字可以直接粘回 `/tp`）。
+
+放在 service 而不是各命令里，是为了让「每条传送都报」这件事不可能被漏掉，也避免四个调用点各写一遍。
+代价是提示会排在命令自己文案的前面（service 先发，命令后发）。
+
+**只在跨维度时显示维度名**，两个键：
+
+| 情况 | 键 |
+|---|---|
+| 同维度 | `teleported` — `已传送至坐标 %s, %s, %s` |
+| 跨维度 | `teleported_in_dimension` — `已传送至维度 %s 的坐标 %s, %s, %s` |
+
+理由是第三方维度没有可用的名字（见下），如果每条都报，在模组维度里刷 `/home` 就会一直顶着裸 id；
+只在跨维度时报，恰好是玩家真正需要知道自己在哪个维度的时候。
+
+维度名走 `Messages.text("dimension." + id.toLanguageKey(), DimensionNames.fallback(id))`。
+**原版没有任何维度名的翻译键**（在客户端 `en_us.json` 里搜 `"dimension.` 命中 0 条），所以不存在可自动对接的约定，
+id 是唯一普遍存在的标识。因此本 mod 自带原版三维度的键，其余维度回退到完整 id（`aether:the_aether`），
+整合包可以用资源包按 `oh_my_teleport.msg.dimension.<ns>.<path>` 起名。放在自己的命名空间下是为了不和别的模组撞车。
+
+## 7.2 多维度模组的兼容性
+
+- **传送功能本身与维度来源无关。** 存的是维度 id 字符串，解析走 `ResourceKey.create(Registries.DIMENSION, id)` +
+  `server.getLevel(key)`，对 `aether:the_aether` 与原版维度是同一条代码路径，代码里没有「只认原版维度」的判断。
+- **维度不存在时不崩**：`getLevel` 返回 null 即 `unknown_dimension` 失败，不传送、不记录 origin。覆盖用例
+  `teleportingIntoAMissingDimensionIsRefusedNotFatal`（模组卸载、未加载、以及格式非法的 id 两种输入）。
+- 正向路径有 `teleportingIntoAnotherDimensionMovesThePlayerThere` 实测跨维度传送（真把玩家传进下界并核对坐标）。
+  第三方维度无法在本仓库自动化验证（测试环境里没有这类模组），但与上条同代码路径。
 
 ## 8. TPA 语义
 

@@ -10,6 +10,7 @@ import com.ratoriku.ohmyteleport.core.PlayerData;
 import com.ratoriku.ohmyteleport.data.PlayerDataSavedData;
 import com.ratoriku.ohmyteleport.server.TeleportPoints;
 import com.ratoriku.ohmyteleport.server.TeleportService;
+import com.ratoriku.ohmyteleport.text.Messages;
 
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;

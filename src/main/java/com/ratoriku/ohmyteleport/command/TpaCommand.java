@@ -11,6 +11,7 @@ import com.ratoriku.ohmyteleport.core.TpaRegistry;
 import com.ratoriku.ohmyteleport.server.TeleportPoints;
 import com.ratoriku.ohmyteleport.server.TeleportService;
 import com.ratoriku.ohmyteleport.server.TpaService;
+import com.ratoriku.ohmyteleport.text.Messages;
 
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;

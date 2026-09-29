@@ -3,7 +3,9 @@ package com.ratoriku.ohmyteleport.gametest;
 import java.util.Optional;
 
 import com.ratoriku.ohmyteleport.core.PlayerData;
+import com.ratoriku.ohmyteleport.core.TeleportPoint;
 import com.ratoriku.ohmyteleport.data.PlayerDataSavedData;
+import com.ratoriku.ohmyteleport.server.TeleportService;
 import com.ratoriku.ohmyteleport.server.TpaService;
 
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
@@ -250,6 +252,91 @@ public class TeleportGameTest {
 
 		if (target.position().distanceTo(before) > TOLERANCE) {
 			helper.fail("tpaccept moved the player even with no pending request");
+			return;
+		}
+		helper.succeed();
+	}
+
+	/**
+	 * Calls the service directly rather than going through a command, because command dispatch
+	 * swallows exceptions - this way a throwing teleport or a throwing chat message fails loudly
+	 * instead of being hidden behind a passing position assertion.
+	 */
+	@GameTest(structure = EMPTY_STRUCTURE, maxTicks = 100)
+	public void theTeleportServiceMovesThePlayerAndAnnouncesIt(GameTestHelper helper) {
+		ServerPlayer player = helper.makeMockServerPlayerInLevel();
+		ServerLevel level = level(player);
+		Vec3 destination = player.position().add(10.0, 0.0, 0.0);
+
+		Optional<TeleportService.Failure> failure = TeleportService.teleport(player, new TeleportPoint(
+				level.dimension().identifier().toString(),
+				destination.x, destination.y, destination.z, 0.0f, 0.0f));
+
+		if (failure.isPresent()) {
+			helper.fail("the teleport was refused: " + failure.get().key());
+			return;
+		}
+		if (player.position().distanceTo(destination) > TOLERANCE) {
+			helper.fail("the player did not arrive: " + player.position() + " expected " + destination);
+			return;
+		}
+		helper.succeed();
+	}
+
+	/**
+	 * The modpack case: a saved point whose dimension is gone (its mod was removed, or the level is
+	 * simply not loaded). This must be refused with a clear reason and no side effects - not a crash
+	 * and not a half-finished teleport.
+	 */
+	@GameTest(structure = EMPTY_STRUCTURE, maxTicks = 100)
+	public void teleportingIntoAMissingDimensionIsRefusedNotFatal(GameTestHelper helper) {
+		ServerPlayer player = helper.makeMockServerPlayerInLevel();
+		Vec3 before = player.position();
+
+		String[] unusableDimensions = { "some_removed_mod:gone_dimension", "not a valid id at all" };
+		for (String dimensionId : unusableDimensions) {
+			Optional<TeleportService.Failure> failure = TeleportService.teleport(player,
+					new TeleportPoint(dimensionId, before.x, before.y, before.z, 0.0f, 0.0f));
+
+			if (failure.isEmpty()) {
+				helper.fail("a teleport into '" + dimensionId + "' was allowed");
+				return;
+			}
+			if (!"unknown_dimension".equals(failure.get().key())) {
+				helper.fail("unexpected failure for '" + dimensionId + "': " + failure.get().key());
+				return;
+			}
+			if (player.position().distanceTo(before) > TOLERANCE) {
+				helper.fail("the player was moved by a refused teleport to '" + dimensionId + "'");
+				return;
+			}
+		}
+		helper.succeed();
+	}
+
+	/**
+	 * The other half of the multi-dimension story: actually moving a player into another level. The
+	 * gametest world has the nether loaded, so this exercises the cross-dimension branch of both the
+	 * teleport itself and the arrival notice.
+	 */
+	@GameTest(structure = EMPTY_STRUCTURE, maxTicks = 100)
+	public void teleportingIntoAnotherDimensionMovesThePlayerThere(GameTestHelper helper) {
+		ServerPlayer player = helper.makeMockServerPlayerInLevel();
+
+		Optional<TeleportService.Failure> failure = TeleportService.teleport(player,
+				new TeleportPoint("minecraft:the_nether", 8.0, 64.0, 8.0, 0.0f, 0.0f));
+
+		if (failure.isPresent()) {
+			helper.fail("the cross-dimension teleport was refused: " + failure.get().key());
+			return;
+		}
+		String arrivedIn = level(player).dimension().identifier().toString();
+		if (!"minecraft:the_nether".equals(arrivedIn)) {
+			helper.fail("the player is not in the nether, they are in " + arrivedIn);
+			return;
+		}
+		if (player.position().distanceTo(new Vec3(8.0, 64.0, 8.0)) > TOLERANCE) {
+			helper.fail("the player arrived at the wrong spot: " + player.position());
 			return;
 		}
 		helper.succeed();

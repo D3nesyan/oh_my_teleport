@@ -38,14 +38,17 @@ Renames that have already bitten here: `ResourceKey.location()` → `identifier(
 
 Two layers, and the boundary is enforced by the build: the `core` package must not import `net.minecraft.*`, which is what makes it unit-testable without launching the game.
 
-- **`core/`** — pure logic. `TeleportPoint` stores its dimension as a **plain id string** (not `ResourceKey<Level>`) precisely to keep this layer MC-free. `PointStore` (named points, case-insensitive via `NameRules`), `PlayerData` (homes + warps + `lastTeleportOrigin`), `PlayerDataStore`, `TpaRegistry` (clock injected via `LongSupplier`), `BackResolver`.
+- **`core/`** — pure logic. `TeleportPoint` stores its dimension as a **plain id string** (not `ResourceKey<Level>`) precisely to keep this layer MC-free. `PointStore` (named points, case-insensitive via `NameRules`), `PlayerData` (homes + warps + `lastTeleportOrigin`), `PlayerDataStore`, `TpaRegistry` (clock injected via `LongSupplier`), `BackResolver`, `DimensionNames` (readable dimension names; pure so it can be tested).
 - **`data/`** — persistence. `PlayerDataCodec` is written with DataFixerUpper primitives only, so it round-trips through `JsonOps` in a plain unit test. `PlayerDataSavedData` is the `SavedData` attached to the overworld; 26.x is codec-only with no NBT read/write pair, and **every mutation must go through `PlayerDataSavedData.mutate`** or nothing reaches disk.
-- **`server/`** — MC glue. `TeleportPoints` is the **only place that calls `player.teleport(...)`**; `TeleportService` records `lastTeleportOrigin` before moving (this is what makes `/back` able to undo a teleport) and returns a `Failure(key, fallback)` instead of throwing; `TpaService` owns the one process-wide `TpaRegistry`.
-- **`command/`** — Brigadier dispatch and text only, no teleport logic. All player-facing strings go through `Messages`, using `translatableWithFallback` so a client without the mod still sees English instead of a raw key.
+- **`server/`** — MC glue. `TeleportPoints` is the **only place that calls `player.teleport(...)`**; `TeleportService` records `lastTeleportOrigin` before moving (this is what makes `/back` able to undo a teleport), sends the arrival notice ("arrived in DIMENSION at X, Y, Z"), and returns a `Failure(key, fallback)` instead of throwing; `TpaService` owns the one process-wide `TpaRegistry`.
+- **`command/`** — Brigadier dispatch only, no teleport logic and no shared text.
+- **`text/`** — `Messages`, the single outlet for player-facing strings, using `translatableWithFallback` so a client without the mod still sees English rather than a raw key. It sits outside `command/` because `server/` needs it too and must not depend on `command/`.
 - **`gametest/`** — in-world tests, inert unless launched with `-Dfabric-api.gametest`.
 
 Behaviours that are deliberate and easy to break by "fixing" them:
 
+- The arrival notice is sent by `TeleportService` rather than by each command, so no command can forget it. Consequence: the notice is printed *before* the command's own message. The dimension is named only when the teleport crossed one (`teleported` vs `teleported_in_dimension`), because vanilla ships no dimension name keys and a modded dimension would otherwise print its raw id on every teleport inside it.
+- Teleporting is dimension-agnostic on purpose: points store a dimension **id string** resolved through `ResourceKey.create(Registries.DIMENSION, …)` + `server.getLevel(…)`, the same path for `aether:the_aether` as for `minecraft:the_nether`. Never add a check for vanilla dimensions. A dimension that is not loaded must keep failing with `unknown_dimension` rather than throwing.
 - `/back` reads vanilla's own death location and **clears it** (`setLastDeathLocation(Optional.empty())`) once used, so the second `/back` falls through to the pre-teleport origin. No mixin, no stored death point.
 - `TpaRegistry` keeps **one pending request per requester** (a new `/tpa` replaces their own, returning the replaced request so the old target can be notified) while requests from different requesters to one target coexist; expiry is lazy on read, so there is no ticking task.
 - Pending TPA requests are intentionally not persisted; a restart dropping them is correct.
@@ -55,5 +58,7 @@ Behaviours that are deliberate and easy to break by "fixing" them:
 Unit tests cover `core` and the codec. Gametests cover what unit tests cannot: command dispatch, `SavedData` write-through, and the real teleport call — they drive actual commands through `Commands.performPrefixedCommand` against `GameTestHelper.makeMockServerPlayerInLevel()` players and assert real coordinates.
 
 Mock players all share the display name `test-mock-player`, so anything requiring player-name resolution (e.g. `/tpa <player>`, `/tpaccept <player>`) cannot be driven through commands in a gametest — seed `TpaService.registry()` directly instead.
+
+Two limits worth knowing: `Commands.performPrefixedCommand` **swallows exceptions** (a throw inside a command becomes a failed command, and position assertions still pass), so anything that must fail loudly should call the service directly — see `theTeleportServiceMovesThePlayerAndAnnouncesIt`. And mock players do not record chat, so message text and localisation can only be checked by eye in a real client; server log lines come from console-source feedback, not from player chat.
 
 Spec and design rationale: [docs/superpowers/specs/2026-09-29-oh-my-teleport-design.md](docs/superpowers/specs/2026-09-29-oh-my-teleport-design.md).
