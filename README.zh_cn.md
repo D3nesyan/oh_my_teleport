@@ -64,7 +64,7 @@
 
 ## 安装
 
-1. 安装 [Fabric Loader](https://fabricmc.net/use/) 0.19.5 或更新版本。
+1. 安装 [Fabric Loader](https://fabricmc.net/use/) 0.20.0 或更新版本。
 2. 安装 [Fabric API](https://modrinth.com/mod/fabric-api)。
 3. 把 [Releases](../../releases) 里的 jar 丢进 `mods/`。
 

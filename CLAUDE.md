@@ -8,7 +8,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Build and test
 
-Every Gradle invocation needs **JDK 25**, because Loom refuses to configure on an older Gradle daemon ("Dependency requires at least JVM runtime version 25"). This machine has JDK 25 only at `~/.jdks/jdk-25.0.4.1+1`; `JAVA_HOME` defaults to JDK 24, which fails.
+Every Gradle invocation needs **JDK 25**, because Loom refuses to configure on an older Gradle daemon ("Dependency requires at least JVM runtime version 25"). This machine has JDK 25 only at `~/.jdks/jdk-25.0.4.1+1`; `JAVA_HOME` defaults to JDK 24, which fails. Loom 1.19.1 also requires **Gradle 9.8.0+**, so the wrapper is pinned there (9.7.1 fails at configuration).
 
 ```bash
 JAVA_HOME="C:/Users/Ratoriku/.jdks/jdk-25.0.4.1+1" ./gradlew build        # compile + unit tests + jar

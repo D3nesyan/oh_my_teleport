@@ -64,7 +64,7 @@ The key is `oh_my_teleport.msg.dimension.` + the dimension id with `:` replaced 
 
 ## Installation
 
-1. Install [Fabric Loader](https://fabricmc.net/use/) 0.19.5 or newer.
+1. Install [Fabric Loader](https://fabricmc.net/use/) 0.20.0 or newer.
 2. Install [Fabric API](https://modrinth.com/mod/fabric-api).
 3. Drop the jar from [Releases](../../releases) into your `mods/` folder.
 
